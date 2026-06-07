@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danos Elétricos - Download de Relatórios</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: #667eea;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            flex: 1;
+            min-width: 150px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        .info-box {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: #999;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ids-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: monospace;
+            resize: vertical;
+        }
+
+        .ids-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            input[type="text"],
+            input[type="number"] {
+                min-width: auto;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Danos Elétricos</h1>
+        <p class="subtitle">Sistema de Download de Relatórios em ZIP</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="alterarTab('unico')">📄 Individual</button>
+            <button class="tab-btn" onclick="alterarTab('multiplo')">📚 Múltiplos</button>
+            <button class="tab-btn" onclick="alterarTab('anexos')">📎 Com Anexos</button>
+        </div>
+
+        <!-- TAB: Download Individual -->
+        <div id="unico" class="tab-content active">
+            <div class="section">
+                <div class="section-title">📥 Download Individual</div>
+                <div class="input-group">
+                    <input type="number" id="relatorioId" placeholder="ID do relatório" min="1">
+                    <button class="btn-primary" onclick="baixarRelatorio()">
+                        <span>⬇️</span> Baixar
+                    </button>
+                </div>
+                <div id="statusUnico" class="status"></div>
+                <div class="info-box">
+                    💡 Digite o ID do relatório (ex: 123) e clique em Baixar
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Download Múltiplo -->
+        <div id="multiplo" class="tab-content">
+            <div class="section">
+                <div class="section-title">📚 Download Múltiplo</div>
+                <label>IDs dos Relatórios (um por linha ou separados por vírgula):</label>
+                <textarea id="relatoriosIds" class="ids-input" placeholder="1&#10;2&#10;3&#10;&#10;ou: 1,2,3"></textarea>
+                <p class="help-text">Separe os IDs por linha ou vírgula</p>
+                
+                <div style="margin-top: 15px;">
+                    <label style="display: block; margin-bottom: 8px;">Nome do arquivo ZIP:</label>
+                    <input type="text" id="nomeZipMultiplo" placeholder="relatorios.zip" style="width: 100%;">
+                </div>
+
+                <button class="btn-primary" onclick="baixarMultiplos()" style="margin-top: 15px; width: 100%;">
+                    <span>⬇️</span> Baixar Todos
+                </button>
+                <div id="statusMultiplo" class="status"></div>
+                <div class="info-box">
+                    💡 Compacta vários relatórios em um único arquivo ZIP
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: Download com Anexos -->
+        <div id="anexos" class="tab-content">
+            <div class="section">
+                <div class="section-title">📎 Com Anexos</div>
+                <div class="input-group">
+                    <input type="number" id="relatorioIdAnexos" placeholder="ID do relatório" min="1">
+                    <button class="btn-primary" onclick="baixarComAnexos()">
+                        <span>⬇️</span> Baixar
+                    </button>
+                </div>
+                <div id="statusAnexos" class="status"></div>
+                <div class="info-box">
+                    💡 Inclui relatório, fotos e documentos anexados
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Geral -->
+        <div class="info-box" style="margin-top: 30px;">
+            ✅ Todos os downloads funcionam em mobile e desktop
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        function alterarTab(tab) {
+            // Esconder todos os tabs
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Mostrar tab selecionado
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function mostrarStatus(elementId, mensagem, tipo) {
+            const el = document.getElementById(elementId);
+            el.textContent = mensagem;
+            el.className = `status ${tipo}`;
+        }
+
+        async function baixarRelatorio() {
+            const id = document.getElementById('relatorioId').value;
+            
+            if (!id) {
+                mostrarStatus('statusUnico', '❌ Digite um ID válido', 'error');
+                return;
+            }
+
+            mostrarStatus('statusUnico', '⏳ Preparando download...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/download/relatorio/${id}`);
+                
+                if (!response.ok) {
+                    const erro = await response.json();
+                    throw new Error(erro.detalhes || 'Erro ao baixar');
+                }
+
+                const blob = await response.blob();
+                baixarBlob(blob, `relatorio_${id}.zip`);
+                mostrarStatus('statusUnico', '✅ Download iniciado com sucesso!', 'success');
+                
+            } catch (error) {
+                mostrarStatus('statusUnico', `❌ Erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function baixarMultiplos() {
+            const idsTexto = document.getElementById('relatoriosIds').value.trim();
+            const nomeZip = document.getElementById('nomeZipMultiplo').value || 'relatorios.zip';
+
+            if (!idsTexto) {
+                mostrarStatus('statusMultiplo', '❌ Digite pelo menos um ID', 'error');
+                return;
+            }
+
+            // Parse IDs
+            let ids = idsTexto
+                .split(/[,\n]/)
+                .map(id => parseInt(id.trim()))
+                .filter(id => !isNaN(id));
+
+            if (ids.length === 0) {
+                mostrarStatus('statusMultiplo', '❌ Nenhum ID válido encontrado', 'error');
+                return;
+            }
+
+            mostrarStatus('statusMultiplo', '⏳ Preparando download...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/download/multiplos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        relatorio_ids: ids,
+                        nome_zip: nomeZip
+                    })
+                });
+
+                if (!response.ok) {
+                    const erro = await response.json();
+                    throw new Error(erro.detalhes || 'Erro ao baixar');
+                }
+
+                const blob = await response.blob();
+                baixarBlob(blob, nomeZip);
+                mostrarStatus('statusMultiplo', `✅ Download de ${ids.length} relatório(s) iniciado!`, 'success');
+                
+            } catch (error) {
+                mostrarStatus('statusMultiplo', `❌ Erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function baixarComAnexos() {
+            const id = document.getElementById('relatorioIdAnexos').value;
+            
+            if (!id) {
+                mostrarStatus('statusAnexos', '❌ Digite um ID válido', 'error');
+                return;
+            }
+
+            mostrarStatus('statusAnexos', '⏳ Preparando download...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/download/relatorio-com-anexos/${id}`);
+                
+                if (!response.ok) {
+                    const erro = await response.json();
+                    throw new Error(erro.detalhes || 'Erro ao baixar');
+                }
+
+                const blob = await response.blob();
+                baixarBlob(blob, `relatorio_completo_${id}.zip`);
+                mostrarStatus('statusAnexos', '✅ Download com anexos iniciado!', 'success');
+                
+            } catch (error) {
+                mostrarStatus('statusAnexos', `❌ Erro: ${error.message}`, 'error');
+            }
+        }
+
+        function baixarBlob(blob, nomeArquivo) {
+            // Criar URL do blob
+            const url = window.URL.createObjectURL(blob);
+            
+            // Criar elemento <a> temporário
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = nomeArquivo;
+            
+            // Adicionar ao DOM, clicar e remover
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Liberar URL
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Testar conexão ao carregar
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch(`${API_BASE}/api/download/status`);
+                if (!response.ok) throw new Error('API indisponível');
+            } catch (error) {
+                console.warn('⚠️ Aviso: API pode estar indisponível:', error);
+            }
+        });
+    </script>
+</body>
+</html>
