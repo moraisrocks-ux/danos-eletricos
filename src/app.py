@@ -3,6 +3,7 @@ from flask_cors import CORS
 import logging
 import os
 from src.api.download_routes import registrar_blueprint as registrar_download
+from src.api.download_base64_routes import registrar_blueprint as registrar_download_base64
 
 # Configuração de logging
 logging.basicConfig(
@@ -24,6 +25,7 @@ def criar_app():
     
     # Registrar blueprints
     registrar_download(app)
+    registrar_download_base64(app)
     
     # Rotas básicas
     @app.route('/', methods=['GET'])
@@ -43,7 +45,11 @@ def criar_app():
                 'download_multiplos': '/api/download/multiplos',
                 'download_com_anexos': '/api/download/relatorio-com-anexos/<id>',
                 'download_pasta': '/api/download/pasta',
+                'download_base64_relatorio': '/api/download/base64/relatorio/<id>',
+                'download_base64_multiplos': '/api/download/base64/multiplos',
+                'download_base64_com_anexos': '/api/download/base64/relatorio-com-anexos/<id>',
                 'status': '/api/download/status',
+                'status_base64': '/api/download/base64/status',
                 'health': '/health'
             }
         }), 200
